@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "uglifyjs -cmo typasync.min.js -- typasync.js",
-    "test": "exit"
+    "test": "node node_modules/.bin/mocha test/test.js"
   },
   "repository": {
     "type": "git",
@@ -27,5 +27,8 @@
   ],
   "author": "morkid <morkid@gmail.com>",
   "license": "MIT",
-  "homepage": "https://bitbucket.org/morkid/typasync#readme"
+  "homepage": "https://bitbucket.org/morkid/typasync#readme",
+  "devDependencies": {
+    "mocha": "^5.0.0"
+  }
 }
