@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TypAsync - Local</title>
+</head>
+<body>
+    <h2>Green Day Members</h2>
+    <input type="text" id="search-native" placeholder="Native Search" autocomplete="off"/>
+    <input type="text" id="search" placeholder="TypAsync Search" autocomplete="off"/>
+
+    <hr/>
+    <div id="result"></div>
+    
+    <hr/>
+    <strong id="type"></strong>
+    <pre id="debug"></pre>
+
+    <script src="../typasync.js"></script>
+    <script>
+        var lists = 'Billie Joe Armstrong, Tré Cool, Mike Dirnt, Jason White, Raj Punjabi, John Kiffmeyer, Aaron Cometbus, Dave Henwood, Sean Hughes'.replace(/,\s/g,',').split(',');
+        var result = document.getElementById('result');
+        var type = document.getElementById('type');
+        var search1 = document.getElementById('search');
+        var search2 = document.getElementById('search-native');
+        var debug = document.getElementById('debug');
+        var typingCount = 0;
+        search1.addEventListener('focus', function() {
+            typingCount = 0;
+            type.innerHTML = 'TypAsync Search:';
+            debug.innerHTML = '';
+        }, false);
+        search2.addEventListener('focus', function() {
+            typingCount = 0;
+            type.innerHTML = 'Native Search:';
+            debug.innerHTML = '';
+        }, false);
+
+        /**
+         * Search with TypAsync
+         */
+        var typing = new TypAsync({input: 'search'});
+
+        typing.on('change', function(value) {
+            getData(value);
+        }).on('empty', function() {
+            result.innerHTML = this.value + ' not found in list';
+        });
+
+        /**
+         * Search with Native
+         */
+        search2.addEventListener('keyup', function() {
+            getData(this.value);
+        }, false);
+
+        /**
+         * Search, Apply and Debug
+         */
+
+        function applyData(results) {
+            if (!results.length) {
+                result.innerHTML = typing.value + ' not found in list';
+                return;
+            }
+            result.innerHTML = '';
+            for (var i = 0; i < results.length; ++i) {
+                result.innerHTML += '<p>'+results[i]+'</p>';
+            }
+        }
+
+        function getData(value) {
+            ++typingCount;
+            var prepend = '';
+            if (typingCount >= 10) {
+                prepend = '<h1>Too many process!</h1>';
+            }
+            log(prepend + typingCount + ") Search string: '"+value+"'");
+            if (value == '') {
+                return applyData([]);
+            }
+            var strings = value.split(' ');
+            var results = [];
+            for (var i in lists) {
+                for (var s in strings) {
+                    var r = new RegExp('('+strings[s]+')', 'i');
+                    if (strings[s] != '' && lists[i].match(r) && results.indexOf(lists[i]) < 0) {
+                        results.push(lists[i]);
+                    }
+                }
+            }
+            return applyData(results);
+        }
+
+        function log(message) {
+            debug.innerHTML = message + "\n" + debug.innerHTML;
+        }
+
+    </script>
+</body>
+</html>

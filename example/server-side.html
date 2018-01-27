@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8"/>
+	<title>Server Side</title>
+</head>
+<body>
+	<h2>Country Finder</h2>
+	<input type="text" id="search-native" placeholder="Native search" autocomplete="off"/>
+	<input type="text" id="search" placeholder="TypAsync search" autocomplete="off"/>
+	
+	<hr>
+	<div id="result"></div>
+
+	<hr>
+	<strong id="type"></strong>
+	<pre id="debug"></pre>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="../typasync.js"></script>
+	<script>
+		$.ajaxSetup({
+			beforeRequest: function() {
+				console.log(arguments)
+			}
+		});
+		var restCountryUrl = 'https://restcountries.eu/rest/v2/name/{name}';
+		var max = 10;
+        var type = document.getElementById('type');
+        var search1 = document.getElementById('search');
+        var search2 = document.getElementById('search-native');
+        var debug = document.getElementById('debug');
+        var typingCount = 0;
+        $(document).on('focus', '#search', function() {
+            typingCount = 0;
+        	$('#type').text('TypAsync Search:');
+        	$('#debug').empty();
+        });
+        $(document).on('focus', '#search-native', function() {
+            typingCount = 0;
+        	$('#type').text('Native Search:');
+        	$('#debug').empty();
+        });
+		
+		/**
+         * Search with TypAsync
+         */
+		var typing = new TypAsync({
+			input: 'search',
+			processing: true,
+			timeout: 1000
+		});
+
+		typing.on('change', function(value, complete) {
+			getData(value, complete);
+		});
+
+		typing.on('empty', function() {
+			applyData([]);
+		});
+
+		/**
+         * Search with Native
+         */
+        $(document).on('keyup', '#search-native', function() {
+        	getData($(this).val());
+        });
+
+		var result = $('#result');
+		function applyData(response) {
+			result.empty();
+			for (var i = 0; i < Math.min(max, response.length); ++i) {
+				var country = response[i];
+				result.append('<p>'+country.name+' ('+country.alpha2Code+')</p>');
+			}
+		}
+
+		function getData(value, callback) {
+            if (clean(value) == '') {
+            	return applyData([]);
+            }
+			++typingCount;
+			var prepend = '';
+            if (typingCount >= 10) {
+                prepend = '<h1>Too many request!</h1>';
+            }
+            var url = restCountryUrl.replace(/\{name\}/, clean(value));
+            log(prepend + typingCount + ") Send request to:\n'"+url+"'\n\n");
+
+			$.get(url).done(function(json) {
+				applyData(json);
+				if (typeof callback == 'function') {
+					callback();
+				}
+			}).fail(function() {
+				applyData([]);
+				if (typeof callback == 'function') {
+					callback();
+				}
+			});
+		}
+
+		function clean(text) {
+			return text.replace(/[^a-z]+/i, '+');
+		}
+
+		function log(message) {
+            debug.innerHTML = message + "\n" + debug.innerHTML;
+        }
+	</script>
+</body>
+</html>
