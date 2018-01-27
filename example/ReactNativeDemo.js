@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Text, TextInput, View, ListView} from 'react-native';
-import {TypAsync} from './typasync';
+import TypAsync from 'typasync';
 
 const ds = new ListView.DataSource({rowHasChanged: (a, b) => (a.alpha2Code !== a.alpha2Code ? 1 : -1)});
 const restCountryUrl = 'https://restcountries.eu/rest/v2/name/{name}';

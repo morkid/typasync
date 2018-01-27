@@ -1,0 +1,31 @@
+{
+  "name": "typasync",
+  "version": "0.0.1",
+  "description": "Asynchronous Typing",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "build": "uglifyjs -cmo typasync.min.js -- typasync.js",
+    "test": "exit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://morkid@bitbucket.org/morkid/typasync.git"
+  },
+  "keywords": [
+    "Asynchronous",
+    "Typing",
+    "Javascript",
+    "React",
+    "Native",
+    "Ajax",
+    "Performance",
+    "Faster",
+    "Speed"
+  ],
+  "author": "morkid <morkid@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://bitbucket.org/morkid/typasync#readme"
+}
