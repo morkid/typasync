@@ -1,39 +1,39 @@
-import React, {Component} from 'react';
-import {Text, TextInput, View, ListView} from 'react-native';
-import TypAsync from 'typasync';
+import React, {Component} from 'react'
+import {Text, TextInput, View, ListView} from 'react-native'
+import TypAsync from 'typasync'
 
-const ds = new ListView.DataSource({rowHasChanged: (a, b) => (a.alpha2Code !== a.alpha2Code ? 1 : -1)});
-const restCountryUrl = 'https://restcountries.eu/rest/v2/name/{name}';
+const ds = new ListView.DataSource({rowHasChanged: (a, b) => (a.alpha2Code !== b.alpha2Code ? 1 : -1)})
+const restCountryUrl = 'https://restcountries.eu/rest/v2/name/{name}'
 
 export default class ReactNativeDemo extends Component {
   constructor() {
-    super();
+    super()
     this.state = {
       dataSource: ds.cloneWithRows([])
-    };
+    }
 
     this.typing = new TypAsync({
       timeout: 1000,
       processing: true
-    });
+    })
 
     this.typing
       .on('change', (value, complete) => this.getData(value, complete))
-      .on('empty', () => this.getData([], () => {}));
+      .on('empty', () => this.getData([], () => null))
   }
 
   getData(value, callback) {
-    var url = restCountryUrl.replace(/\{name\}/, value);
+    let url = restCountryUrl.replace(/\{name\}/, value)
     fetch(url)
     .then(res => res.json())
     .then(json => this.applyData(json, callback))
-    .catch(e => this.applyData([], callback));
+    .catch(e => this.applyData([], callback))
   }
 
   applyData(json, complete) {
     console.log('total countries found: ' + json.length)
-    this.setState({dataSource: ds.cloneWithRows(json)});
-    complete();
+    this.setState({dataSource: ds.cloneWithRows(json)})
+    complete()
   }
 
   renderRow(row) {
@@ -42,7 +42,8 @@ export default class ReactNativeDemo extends Component {
 
   render() {
     return <View>
-        <TextInput onChangeText={this.typing.change.bind(this.typing)}/>
+        <TextInput placeholder="Search Country..." 
+          onChangeText={this.typing.change.bind(this.typing)}/>
         <ListView
           enableEmptySections={true}
           dataSource={this.state.dataSource}
