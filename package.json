@@ -29,6 +29,6 @@
   "license": "MIT",
   "homepage": "https://bitbucket.org/morkid/typasync#readme",
   "devDependencies": {
-    "mocha": "^5.0.0"
+    "mocha": "^10.2.0"
   }
 }
